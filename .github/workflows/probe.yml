@@ -1,0 +1,25 @@
+# TEMPORARY probe - prove the inbox workflow fires on an issue.
+name: Probe inbox forwarder
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open a probe issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAYLOAD: ${{ toJSON(github.event.inputs) }}
+        run: |
+          BODY='dhyaana-form-submission'
+          BODY="$BODY"'
+          BODY="$BODY"'```json'
+          BODY="$BODY"'{"kind":"contact","email":"mrxubr@gmail.com","name":"Probe","message":"probe run - ignore","source":"ci-probe"}'
+          BODY="$BODY"'```'
+          gh issue create --title "dhyaana-form-submission: contact" --body "$BODY" --label form-submission || echo "could not open the probe issue"
