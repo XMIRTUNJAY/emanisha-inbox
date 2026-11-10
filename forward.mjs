@@ -3,7 +3,8 @@
 //
 // Runs inside GitHub Actions; credentials come from repository secrets.
 
-const { createTransport } = await import('nodemailer');
+import nodemailer from 'nodemailer';
+import { execFileSync } from 'node:child_process';
 
 const marker = 'dhyaana-form-submission';
 const body = process.env.ISSUE_BODY ?? '';
@@ -62,7 +63,7 @@ const lines = [
   `Issue: ${issueNumber}`,
 ].filter((line) => line !== '');
 
-const transport = createTransport({
+const transport = nodemailer.createTransport({
   host,
   port,
   secure: port === 465,
@@ -85,7 +86,6 @@ try {
 
 // Remove the issue so nothing accumulates in the inbox.
 try {
-  const { execFileSync } = await import('node:child_process');
   execFileSync('gh', ['issue', 'delete', String(issueNumber), '--yes'], {
     stdio: 'inherit',
     env: {
